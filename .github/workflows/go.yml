@@ -1,6 +1,6 @@
 name: Go
 
-on: 
+on:
   push:
   pull_request:
   tags: v*
@@ -10,26 +10,26 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Go 1.15.6
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15.6
 
-    - name: Set up Go 1.15.6
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.15.6
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      - name: Get dependencies
+        run: |
+          go mod download
 
-    - name: Get dependencies
-      run: |
-        go mod download
+      - name: Build
+        run: go build -v ./...
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+      - name: Test
+        run: go test -v ./...
 
   push:
+    needs: build
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' && github.ref != 'refs/heads/master') || github.event_name == 'tag'
     steps:
@@ -39,7 +39,7 @@ jobs:
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.TOKEN_GITHUB }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
@@ -62,5 +62,3 @@ jobs:
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
-    
