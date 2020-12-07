@@ -1,0 +1,112 @@
+basePath: /api
+definitions:
+  handler.metricCreateRequest:
+    properties:
+      metric:
+        properties:
+          value:
+            type: number
+        required:
+        - value
+        type: object
+    type: object
+  handler.metricListResponse:
+    properties:
+      count:
+        type: integer
+      metrics:
+        items:
+          $ref: '#/definitions/handler.metricResponse'
+        type: array
+    type: object
+  handler.metricResponse:
+    properties:
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      value:
+        type: number
+    type: object
+  utils.Error:
+    properties:
+      errors:
+        additionalProperties: true
+        type: object
+    type: object
+info:
+  contact: {}
+  description: Meerkat API
+  title: Meerkat API
+  version: "1.0"
+paths:
+  /repos/metrics:
+    get:
+      consumes:
+      - application/json
+      description: Get most recent metrics globally. Use query parameters to filter
+        results. Auth is optional
+      operationId: get-metrics
+      parameters:
+      - description: Limit number of articles returned (default is 20)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset/skip number of articles (default is 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.metricListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get recent metrics globally
+      tags:
+      - metric
+    post:
+      consumes:
+      - application/json
+      description: Create a metric. Auth is required
+      operationId: create-metric
+      parameters:
+      - description: Metric to create
+        in: body
+        name: metric
+        required: true
+        schema:
+          $ref: '#/definitions/handler.metricCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.metricResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a metric
+      tags:
+      - metric
+schemes:
+- http
+- https
+swagger: "2.0"
