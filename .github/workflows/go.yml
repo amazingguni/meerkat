@@ -3,7 +3,8 @@ name: Go
 on:
   push:
   pull_request:
-  tags: v*
+  tags:
+    - v*
 
 jobs:
   build:
