@@ -1,6 +1,6 @@
 # Meerkat
 
-![.github/workflows/go.yml](https://github.com/amazingguni/meerkat/workflows/.github/workflows/go.yml/badge.svg)
+![Go](https://github.com/amazingguni/meerkat/workflows/Go/badge.svg)
 
 Github에 호스팅되는 repository의 commit별 코드 품질을 저장하는 서버입니다.
 
