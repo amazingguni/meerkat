@@ -2,6 +2,9 @@ name: Go
 
 on: [push, pull_request]
 
+env:
+  IMAGE_NAME: meerkat
+
 jobs:
   build:
     name: Build
